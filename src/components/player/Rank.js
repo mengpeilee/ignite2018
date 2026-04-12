@@ -24,9 +24,11 @@ class Rank extends Component {
   }
 
   //讓Rank重loading
-  componentWillReceiveProps() {
-    console.log("HIHIH");
-    this.getTeamScore();
+  componentDidUpdate(prevProps) {
+    if (prevProps.teamList !== this.props.teamList) {
+      console.log("HIHIH");
+      this.getTeamScore();
+    }
   }
 
   //功能： 1.以Parse SDK取得資料 2.將資料依分數由大到小排列 3.將排序的資料抽出'排名''小隊''職業''分數'放入this.state.tableData中

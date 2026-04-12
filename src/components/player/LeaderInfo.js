@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   View,
   Text,
@@ -6,29 +6,35 @@ import {
   Image,
   WebView,
   Linking,
-  Platform
-} from 'react-native';
-import { connect } from 'react-redux';
-import { 
-  getTeamData, 
-  careerCodeChanged, 
+  Platform,
+} from "react-native";
+import { connect } from "react-redux";
+import {
+  getTeamData,
+  careerCodeChanged,
   careerGrowUp,
-  errorModalInfoType
-} from '../../actions';
-import { BackgroundImage, InputModal, Spinner } from '../common';
-import { Biochemical, Defense, Sniper, Special, Soldier, Assault } from '../../images';
-import { ifIphoneX } from '../IphoneXDetector';
+  errorModalInfoType,
+} from "../../actions";
+import { BackgroundImage, InputModal, Spinner } from "../common";
+import {
+  Biochemical,
+  Defense,
+  Sniper,
+  Special,
+  Soldier,
+  Assault,
+} from "../../images";
+import { ifIphoneX } from "../IphoneXDetector";
 //import data from '../../Setting.json';
 
-const { height, width } = Dimensions.get('window');
+const { height, width } = Dimensions.get("window");
 
 class LeaderInfo extends Component {
-
-  state= {
-    showModal: false
+  state = {
+    showModal: false,
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.getTeamData();
   }
 
@@ -41,76 +47,43 @@ class LeaderInfo extends Component {
   }
 
   openExternalLink(req) {
-    const isLocal = req.url.search('http://localhost') !== -1;
+    const isLocal = req.url.search("http://localhost") !== -1;
     if (isLocal) {
       return true;
-    } else if (req.url.startsWith('https://')) {
-     return true;
+    } else if (req.url.startsWith("https://")) {
+      return true;
     }
-      Linking.openURL(req.url);
-      return false;
-   }
+    Linking.openURL(req.url);
+    return false;
+  }
 
   renderCareer() {
     const { careerStyle } = styles;
-    if (this.props.career.name === '戰士') {
-      return (
-        <Image
-        source={Soldier}
-        style={careerStyle}
-        />
-      );
-    } else if (this.props.career.name === '特勤部隊') {
-        return (
-          <Image
-          source={Special}
-          style={careerStyle}
-          />
-        );
-    } else if (this.props.career.name === '急襲部隊') {
-        return (
-          <Image
-          source={Assault}
-          style={careerStyle}
-          />
-        );
-    } else if (this.props.career.name === '狙擊部隊') {
-      return (
-        <Image
-        source={Sniper}
-        style={careerStyle}
-        />
-      );
-    } else if (this.props.career.name === '防禦部隊') {
-      return (
-        <Image
-        source={Defense}
-        style={careerStyle}
-        />
-      );
-    } else if (this.props.career.name === '生化小組') {
-      return (
-        <Image
-        source={Biochemical}
-        style={careerStyle}
-        />
-      );
-    } 
+    if (this.props.career.name === "戰士") {
+      return <Image source={Soldier} style={careerStyle} />;
+    } else if (this.props.career.name === "特勤部隊") {
+      return <Image source={Special} style={careerStyle} />;
+    } else if (this.props.career.name === "急襲部隊") {
+      return <Image source={Assault} style={careerStyle} />;
+    } else if (this.props.career.name === "狙擊部隊") {
+      return <Image source={Sniper} style={careerStyle} />;
+    } else if (this.props.career.name === "防禦部隊") {
+      return <Image source={Defense} style={careerStyle} />;
+    } else if (this.props.career.name === "生化小組") {
+      return <Image source={Biochemical} style={careerStyle} />;
+    }
   }
 
   renderInfo() {
-    const { 
-      teamTextStyle, 
-      scoreTextStyle, 
-      infoStyle,
-      infoStyle2 
-    } = styles;
+    const { teamTextStyle, scoreTextStyle, infoStyle, infoStyle2 } = styles;
 
     return (
-      <View 
+      <View
         style={
-          (this.props.career.name === '戰士' || this.props.career.name === '生化小組')
-          ? infoStyle2 : infoStyle
+          this.props.career.name === "戰士" ||
+          this.props.career.name === "生化小組"
+            ? infoStyle2
+            : infoStyle
         }
       >
         <Text style={teamTextStyle}>TEAM {this.props.name}</Text>
@@ -120,38 +93,41 @@ class LeaderInfo extends Component {
   }
 
   renderChangeCareer() {
-    const { 
-      careerTextStyle,
-      circle,
-      circleContainerStyle
-    } = styles;
+    const { careerTextStyle, circle, circleContainerStyle } = styles;
 
-    if (this.props.career.name === '戰士') {
+    if (this.props.career.name === "戰士") {
       return (
         <View style={circleContainerStyle}>
           <View style={circle}>
-            <Text 
-              onPress={() => { this.setState({ showModal: true }); }} 
+            <Text
+              onPress={() => {
+                this.setState({ showModal: true });
+              }}
               style={careerTextStyle}
             >
               轉職
-           </Text>
-         </View>
-       </View>
+            </Text>
+          </View>
+        </View>
       );
-    } 
-      return (
-        <View style={circleContainerStyle}>
-          <View style={circle}>
-            <Text 
-              onPress={() => { this.props.errorModalInfoType(true, this.props.career.description); }} 
-              style={careerTextStyle}
-            >
-              職業介紹
-           </Text>
-         </View>
-       </View>
-      );
+    }
+    return (
+      <View style={circleContainerStyle}>
+        <View style={circle}>
+          <Text
+            onPress={() => {
+              this.props.errorModalInfoType(
+                true,
+                this.props.career.description,
+              );
+            }}
+            style={careerTextStyle}
+          >
+            職業介紹
+          </Text>
+        </View>
+      </View>
+    );
   }
 
   renderRadar() {
@@ -171,151 +147,160 @@ class LeaderInfo extends Component {
       patience, //耐力
     } = this.props;
 
-    if (this.props.batch === '大專') {
+    if (this.props.batch === "大專") {
       return (
         <View style={{ flex: 2 }}>
           <WebView
-              source={{ uri: `https://hsiangyu.com/RadarHTML/index.html?a=${passion}&b=${creativity}&c=${intelligence}&d=${love}&e=${patience}&f=1` }}
-              style={{ marginTop: 1 }}
-              onShouldStartLoadWithRequest={this.openExternalLink}
-              scrollEnabled={false}
+            source={{
+              uri: `https://hsiangyu.com/RadarHTML/index.html?a=${passion}&b=${creativity}&c=${intelligence}&d=${love}&e=${patience}&f=1`,
+            }}
+            style={{ marginTop: 1 }}
+            onShouldStartLoadWithRequest={this.openExternalLink}
+            scrollEnabled={false}
           />
-      </View>
+        </View>
       );
     }
     return (
       <View style={{ flex: 2 }}>
         <WebView
-            source={{ uri: `https://hsiangyu.com/RadarHTML/index.html?a=${strength}&b=${wisdom}&c=${vitality}&d=${faith}&e=${agility}&f=2` }}
-            style={{ marginTop: 1 }}
-            onShouldStartLoadWithRequest={this.openExternalLink}
-            scrollEnabled={false}
+          source={{
+            uri: `https://hsiangyu.com/RadarHTML/index.html?a=${strength}&b=${wisdom}&c=${vitality}&d=${faith}&e=${agility}&f=2`,
+          }}
+          style={{ marginTop: 1 }}
+          onShouldStartLoadWithRequest={this.openExternalLink}
+          scrollEnabled={false}
         />
-    </View>
+      </View>
     );
   }
 
   render() {
-      const { 
-        containerStyle
-      } = styles;
+    const { containerStyle } = styles;
 
-      if (this.props.loading) {
-        return (
-          <Spinner />
-        );
-      } 
-      
-      return (
-        <BackgroundImage style={containerStyle}>
-          <InputModal
-            titleText={'請輸入序號以驗證是否正確:'}
-            visible={this.state.showModal}
-            cancelButton
-            scrollable={false}
-            cancel={() => { this.setState({ showModal: false }); }}
-            onPress={() => { 
-              this.setState({ showModal: false });
-              this.onCareerGrowUp(this.props.careerCode); 
-            }}
-            inputText
-            value={this.props.careerCode}
-            onChangeText={(text) => { this.onCareerCodeChange(text); }}
-          />
-          <InputModal
-            titleText={this.props.errorInfoText}
-            textCustomStyle={
-              (this.props.career.name === '戰士') 
-               ? { textAlign: 'center' } : { textAlign: 'left' }
-            }
-            scrollable={(this.props.career.name !== '戰士')}
-            visible={this.props.showErrorInfoModal}
-            onPress={() => { this.props.errorModalInfoType(false, ''); }}
-          />
-          <View style={{ flex: 1 }}>
-            {this.renderCareer()}
-            {this.renderInfo()}
-          </View>
-          <View style={{ flex: 1, flexDirection: 'row' }}>
-            {this.renderChangeCareer()}
-            {this.renderRadar()}
-          </View>       
-        </BackgroundImage>
-      );   
+    if (this.props.loading) {
+      return <Spinner />;
+    }
+
+    return (
+      <BackgroundImage style={containerStyle}>
+        <InputModal
+          titleText={"請輸入序號以驗證是否正確:"}
+          visible={this.state.showModal}
+          cancelButton
+          scrollable={false}
+          cancel={() => {
+            this.setState({ showModal: false });
+          }}
+          onPress={() => {
+            this.setState({ showModal: false });
+            this.onCareerGrowUp(this.props.careerCode);
+          }}
+          inputText
+          value={this.props.careerCode}
+          onChangeText={(text) => {
+            this.onCareerCodeChange(text);
+          }}
+        />
+        <InputModal
+          titleText={this.props.errorInfoText}
+          textCustomStyle={
+            this.props.career.name === "戰士"
+              ? { textAlign: "center" }
+              : { textAlign: "left" }
+          }
+          scrollable={this.props.career.name !== "戰士"}
+          visible={this.props.showErrorInfoModal}
+          onPress={() => {
+            this.props.errorModalInfoType(false, "");
+          }}
+        />
+        <View style={{ flex: 1 }}>
+          {this.renderCareer()}
+          {this.renderInfo()}
+        </View>
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          {this.renderChangeCareer()}
+          {this.renderRadar()}
+        </View>
+      </BackgroundImage>
+    );
   }
 }
 
 const styles = {
   containerStyle: {
     flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'white'
+    flexDirection: "column",
+    backgroundColor: "white",
   },
   careerStyle: {
     ...Platform.select({
       ios: {
-        ...ifIphoneX({
-          height: height / 1.5,
-          width: width / 1.5,
-          resizeMode: Image.resizeMode.contain
-        },
-        {
-          height: height / 1.1,
-          width: width / 1.1,
-          resizeMode: Image.resizeMode.contain
-        })
+        ...ifIphoneX(
+          {
+            height: height / 1.5,
+            width: width / 1.5,
+            resizeMode: "contain",
+          },
+          {
+            height: height / 1.1,
+            width: width / 1.1,
+            resizeMode: "contain",
+          },
+        ),
       },
       android: {
         height: height / 1.1,
         width: width / 1.1,
-        resizeMode: Image.resizeMode.contain
-      }
-    })
+        resizeMode: "contain",
+      },
+    }),
   },
   infoStyle: {
-    position: 'absolute',
+    position: "absolute",
     left: width / 2.5,
     top: height / 8.5,
   },
   infoStyle2: {
-    position: 'absolute',
+    position: "absolute",
     left: width / 2.9,
     top: height / 8.5,
   },
   teamTextStyle: {
-    color: '#69AEB2',
-    textAlign: 'center',
-    fontWeight: 'bold',
+    color: "#69AEB2",
+    textAlign: "center",
+    fontWeight: "bold",
     fontSize: 16,
   },
   scoreTextStyle: {
-    color: '#69AEB2',
-    fontWeight: 'bold',
+    color: "#69AEB2",
+    fontWeight: "bold",
     fontSize: 23,
   },
   circleContainerStyle: {
     flex: 1,
     paddingBottom: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   circle: {
     borderRadius: 50,
     width: 100,
     height: 100,
-    backgroundColor: '#BBC3DC',
+    backgroundColor: "#BBC3DC",
   },
   careerTextStyle: {
     paddingTop: 40,
-    textAlign: 'center',
-    color: '#fff',
-    fontWeight: 'bold',
+    textAlign: "center",
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
-  }
+  },
 };
 
 const mapStateToProps = ({ player }) => {
-  const {  
+  const {
     batch, //國高or大專
     camp, //陣營
     name, //第幾小隊
@@ -340,10 +325,10 @@ const mapStateToProps = ({ player }) => {
     careerCode,
     showErrorInfoModal,
     errorInfoText,
-    loading
-   } = player;
+    loading,
+  } = player;
 
-  return { 
+  return {
     batch, //國高or大專
     camp, //陣營
     name, //第幾小隊
@@ -368,7 +353,7 @@ const mapStateToProps = ({ player }) => {
     careerCode,
     showErrorInfoModal,
     errorInfoText,
-    loading
+    loading,
   };
 };
 
@@ -376,5 +361,5 @@ export default connect(mapStateToProps, {
   getTeamData,
   careerCodeChanged,
   careerGrowUp,
-  errorModalInfoType
+  errorModalInfoType,
 })(LeaderInfo);

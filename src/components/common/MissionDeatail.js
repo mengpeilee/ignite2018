@@ -1,55 +1,31 @@
-import React, { Component } from 'react';
-import {
-  TouchableOpacity,
-  View,
-  Image,
-  Text
-} from 'react-native';
-import { defaultPicUsercenter } from '../../images';
-
+import React, { Component } from "react";
+import { TouchableOpacity, View, Image, Text } from "react-native";
+import { defaultPicUsercenter } from "../../images";
 
 class MissionDeatail extends Component {
-
   renderTypeText(addType) {
-    const {
-      addContainer,
-      addStyle,
-      invitedStyle
-    } = styles;
+    const { addContainer, addStyle, invitedStyle } = styles;
 
-      if (addType) {
-        return (
-            <View style={addContainer}>
-                <Text style={invitedStyle}>
-                    已過關
-                </Text>
-            </View>
-        );
-      } else if (addType === false) {
-        return (
-            <View style={addContainer}>
-                <Text
-                    style={addStyle}
-                >
-                    未通過
-                </Text>
-            </View>
-        );
-     }
+    if (addType) {
+      return (
+        <View style={addContainer}>
+          <Text style={invitedStyle}>已過關</Text>
+        </View>
+      );
+    } else if (addType === false) {
+      return (
+        <View style={addContainer}>
+          <Text style={addStyle}>未通過</Text>
+        </View>
+      );
+    }
   }
 
   render() {
-    const {
-      container,
-      infoDiv,
-      imageDiv,
-      nameDiv,
-      textContainer,
-      textStyle,
-    } = styles;
+    const { container, infoDiv, imageDiv, nameDiv, textContainer, textStyle } =
+      styles;
 
-    const { missionName, image, onPress, customStyle, addType,
-    } = this.props;
+    const { missionName, image, onPress, customStyle, addType } = this.props;
 
     return (
       <View style={[container, customStyle]}>
@@ -60,7 +36,7 @@ class MissionDeatail extends Component {
                 width: 55,
                 height: 55,
                 borderRadius: 55 / 2,
-                resizeMode: Image.resizeMode.contain
+                resizeMode: "contain",
               }}
               defaultSource={defaultPicUsercenter}
               source={image}
@@ -69,7 +45,7 @@ class MissionDeatail extends Component {
           <View style={nameDiv}>
             <View style={textContainer}>
               <Text style={textStyle} numberOfLines={1}>
-                  {missionName}
+                {missionName}
               </Text>
             </View>
           </View>
@@ -82,51 +58,51 @@ class MissionDeatail extends Component {
 
 const styles = {
   container: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: "#fff",
   },
   infoDiv: {
     flex: 7,
-    flexDirection: 'row'
+    flexDirection: "row",
   },
   imageDiv: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    padding: 10
+    justifyContent: "center",
+    alignItems: "flex-end",
+    padding: 10,
   },
   nameDiv: {
-    justifyContent: 'center',
+    justifyContent: "center",
     flex: 3,
-    marginLeft: 5
+    marginLeft: 5,
   },
   textContainer: {
-    flexDirection: 'column'
+    flexDirection: "column",
   },
   textStyle: {
-    alignSelf: 'flex-start',
-    color: '#222',
+    alignSelf: "flex-start",
+    color: "#222",
     fontSize: 18,
-    fontWeight: '500'
+    fontWeight: "500",
   },
   invitedStyle: {
-    color: '#bbb',
-    fontSize: 12
+    color: "#bbb",
+    fontSize: 12,
   },
   addContainer: {
     flex: 1.5,
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    padding: 10
+    justifyContent: "center",
+    alignItems: "flex-end",
+    padding: 10,
   },
   addStyle: {
-    color: '#69AEB2',
+    color: "#69AEB2",
     fontSize: 14,
-    fontWeight: '500',
-    textDecorationLine: 'underline'
-  }
+    fontWeight: "500",
+    textDecorationLine: "underline",
+  },
 };
 
 export { MissionDeatail };

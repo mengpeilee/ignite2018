@@ -1,85 +1,89 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { View, Text, Dimensions } from "react-native";
+import { connect } from "react-redux";
+import { Table, Row, Rows } from "react-native-table-component";
 import {
-  View,
-  Text,
-  Dimensions,
-} from 'react-native';
-import { connect } from 'react-redux';
-import { Table, Row, Rows } from 'react-native-table-component';
-import { 
   resetCodeChanged,
   skillJunior,
   skillCollege,
   resetCodeJunior,
   resetCodeCollege,
-  errorModalSkillType
-} from '../../actions';
-import { Button, SkillRow, InputModal, Spinner } from '../common';
+  errorModalSkillType,
+} from "../../actions";
+import { Button, SkillRow, InputModal, Spinner } from "../common";
 
-const { height, width } = Dimensions.get('window');
+const { height, width } = Dimensions.get("window");
 class Skills extends Component {
-  state = { 
+  state = {
     showSureModal: false,
     showResetModal: false,
     temp1: 0,
     temp2: 0,
     temp3: 0,
     temp4: 0,
-    temp5: 0
-  }
+    temp5: 0,
+  };
 
   //重loading資料時暫存點數歸零
-  componentWillReceiveProps() {
-    console.log('HIHIH');
-    this.setState({
-      temp1: 0,
-      temp2: 0,
-      temp3: 0,
-      temp4: 0,
-      temp5: 0
-    });
+  componentDidMount() {
+    this.resetTemps();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.skillList !== this.props.skillList) {
+      console.log("HIHIH");
+      this.resetTemps();
+    }
   }
 
   onResetCodeChange(text) {
     this.props.resetCodeChanged(text);
   }
 
+  resetTemps() {
+    this.setState({
+      temp1: 0,
+      temp2: 0,
+      temp3: 0,
+      temp4: 0,
+      temp5: 0,
+    });
+  }
+
   renderSkill() {
-    return this.props.skillTable.map(
-      skills => (
-        <SkillRow
-          key={skills.id}
-          chineseName={skills.chineseName}
-          value={this.state[skills.valueName]}
-          subOnPress={() => {
-            if (this.state[skills.valueName] > 0) {
-              this.setState((previousState) => {
-                return {
-                  [skills.valueName]: previousState[skills.valueName] - 1
-                };
-              });
-            }
-          }}
-          addOnPress={() => {
-            if (
-              this.props.free_point -
+    return this.props.skillTable.map((skills) => (
+      <SkillRow
+        key={skills.id}
+        chineseName={skills.chineseName}
+        value={this.state[skills.valueName]}
+        subOnPress={() => {
+          if (this.state[skills.valueName] > 0) {
+            this.setState((previousState) => {
+              return {
+                [skills.valueName]: previousState[skills.valueName] - 1,
+              };
+            });
+          }
+        }}
+        addOnPress={() => {
+          if (
+            this.props.free_point -
               this.state.temp1 -
               this.state.temp2 -
               this.state.temp3 -
               this.state.temp4 -
-              this.state.temp5    
-              > 0
-            ) {
-              this.setState((previousState) => {
-                return {
-                  [skills.valueName]: previousState[skills.valueName] + 1
-                };
-              });
-            }
-          }}
-        />
-      )
-    );
+              this.state.temp5 >
+            0
+          ) {
+            this.setState((previousState) => {
+              return {
+                [skills.valueName]: previousState[skills.valueName] + 1,
+              };
+            });
+          }
+        }}
+      />
+    ));
   }
 
   renderButton() {
@@ -87,11 +91,11 @@ class Skills extends Component {
 
     return (
       <View style={btnAreaStyle}>
-        <Button 
-          btnCustomStyle={{ 
-            backgroundColor: '#ED2A67', 
-            marginRight: width * 0.12, 
-            borderColor: '#ED2A67' 
+        <Button
+          btnCustomStyle={{
+            backgroundColor: "#ED2A67",
+            marginRight: width * 0.12,
+            borderColor: "#ED2A67",
           }}
           onPress={() => {
             this.setState({ showResetModal: true });
@@ -99,8 +103,8 @@ class Skills extends Component {
         >
           重置
         </Button>
-        <Button 
-          btnCustomStyle={{ 
+        <Button
+          btnCustomStyle={{
             marginLeft: width * 0.12,
           }}
           onPress={() => {
@@ -114,7 +118,7 @@ class Skills extends Component {
   }
 
   render() {
-    const { 
+    const {
       container,
       freePointContainer,
       freePointTextStyle,
@@ -122,64 +126,64 @@ class Skills extends Component {
       tableHead,
       tableHeadText,
       tableRow,
-      tableRowText
+      tableRowText,
     } = styles;
 
     if (this.props.loading) {
-      return (
-        <Spinner />
-      );
-    } 
+      return <Spinner />;
+    }
 
     return (
       <View style={container}>
-         <InputModal
-           titleText={'請輸入序號來重置所有能力值:'}
-           visible={this.state.showResetModal}
-           cancelButton
-           scrollable={false}
-           cancel={() => { 
-            this.setState({ showResetModal: false }); 
-          }}
-           onPress={() => { 
-             if (this.props.batch === '國高') {
-                this.props.resetCodeJunior(
-                  this.props.resetCode,
-                  this.props.free_point,
-                  this.props.strength,
-                  this.props.wisdom,
-                  this.props.vitality,
-                  this.props.faith,
-                  this.props.agility,
-                );
-                this.setState({ showResetModal: false }); 
-             } else {
-              this.props.resetCodeCollege(
-                  this.props.resetCode,
-                  this.props.free_point,
-                  this.props.passion,
-                  this.props.creativity,
-                  this.props.intelligence,
-                  this.props.love,
-                  this.props.patience,
-              );
-              this.setState({ showResetModal: false }); 
-             }
-           }}
-           inputText
-           value={this.props.resetCode}
-           onChangeText={(text) => { this.onResetCodeChange(text); }}
-         />
         <InputModal
-           titleText={'請確認您配置的能力值點數\n送出後將無法回復!'}
-           visible={this.state.showSureModal}
-           cancelButton
-           scrollable={false}
-           cancel={() => { 
-            this.setState({ showSureModal: false }); 
-           }}
-           onPress={() => { 
-            if (this.props.batch === '國高') {
+          titleText={"請輸入序號來重置所有能力值:"}
+          visible={this.state.showResetModal}
+          cancelButton
+          scrollable={false}
+          cancel={() => {
+            this.setState({ showResetModal: false });
+          }}
+          onPress={() => {
+            if (this.props.batch === "國高") {
+              this.props.resetCodeJunior(
+                this.props.resetCode,
+                this.props.free_point,
+                this.props.strength,
+                this.props.wisdom,
+                this.props.vitality,
+                this.props.faith,
+                this.props.agility,
+              );
+              this.setState({ showResetModal: false });
+            } else {
+              this.props.resetCodeCollege(
+                this.props.resetCode,
+                this.props.free_point,
+                this.props.passion,
+                this.props.creativity,
+                this.props.intelligence,
+                this.props.love,
+                this.props.patience,
+              );
+              this.setState({ showResetModal: false });
+            }
+          }}
+          inputText
+          value={this.props.resetCode}
+          onChangeText={(text) => {
+            this.onResetCodeChange(text);
+          }}
+        />
+        <InputModal
+          titleText={"請確認您配置的能力值點數\n送出後將無法回復!"}
+          visible={this.state.showSureModal}
+          cancelButton
+          scrollable={false}
+          cancel={() => {
+            this.setState({ showSureModal: false });
+          }}
+          onPress={() => {
+            if (this.props.batch === "國高") {
               this.props.skillJunior(
                 this.props.free_point,
                 this.props.strength,
@@ -196,7 +200,7 @@ class Skills extends Component {
               );
               this.setState({ showSureModal: false });
             } else {
-             this.props.skillCollege(
+              this.props.skillCollege(
                 this.props.free_point,
                 this.props.passion,
                 this.props.creativity,
@@ -209,43 +213,45 @@ class Skills extends Component {
                 this.state.temp3,
                 this.state.temp4,
                 this.state.temp5,
-             );
-             this.setState({ showSureModal: false });
+              );
+              this.setState({ showSureModal: false });
             }
-           }}
+          }}
         />
         <InputModal
           titleText={this.props.errorSkillText}
           scrollable={false}
           visible={this.props.showErrorSkillModal}
-          onPress={() => { this.props.errorModalSkillType(false, ''); }}
+          onPress={() => {
+            this.props.errorModalSkillType(false, "");
+          }}
         />
         <View style={freePointContainer}>
           <Text style={freePointTextStyle}>自由點數</Text>
-          <Text style={freePointNumTextStyle}>{
-            this.props.free_point -
-            this.state.temp1 -
-            this.state.temp2 -
-            this.state.temp3 -
-            this.state.temp4 -
-            this.state.temp5    
-          }</Text>        
+          <Text style={freePointNumTextStyle}>
+            {this.props.free_point -
+              this.state.temp1 -
+              this.state.temp2 -
+              this.state.temp3 -
+              this.state.temp4 -
+              this.state.temp5}
+          </Text>
         </View>
 
-        <Table 
-          borderStyle={{ borderWidth: 2, borderColor: '#fff' }}
+        <Table
+          borderStyle={{ borderWidth: 2, borderColor: "#fff" }}
           style={{ flex: 2 }}
         >
-            <Row 
-              data={this.props.tableHead} 
-              style={tableHead} 
-              textStyle={tableHeadText} 
-            />
-            <Rows
-                data={this.props.tableData}
-                style={tableRow}
-                textStyle={tableRowText}
-            />
+          <Row
+            data={this.props.tableHead}
+            style={tableHead}
+            textStyle={tableHeadText}
+          />
+          <Rows
+            data={this.props.tableData}
+            style={tableRow}
+            textStyle={tableRowText}
+          />
         </Table>
         {this.renderSkill()}
         {this.renderButton()}
@@ -257,52 +263,52 @@ class Skills extends Component {
 const styles = {
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   freePointContainer: {
     flex: 2,
-    alignItems: 'center',
-    justifyContent: 'center' 
+    alignItems: "center",
+    justifyContent: "center",
   },
   freePointNumTextStyle: {
-    fontWeight: 'bold', 
-    fontSize: 25
+    fontWeight: "bold",
+    fontSize: 25,
   },
   freePointTextStyle: {
-    fontWeight: 'bold', 
-    fontSize: 22, 
-    marginBottom: height * 0.01
+    fontWeight: "bold",
+    fontSize: 22,
+    marginBottom: height * 0.01,
   },
-  tableHead: { 
+  tableHead: {
     height: 40,
-    backgroundColor: '#AAAAAA'
+    backgroundColor: "#AAAAAA",
   },
-  tableRowText: { 
+  tableRowText: {
     margin: 6,
-    textAlign: 'center', 
-    fontWeight: '400' 
+    textAlign: "center",
+    fontWeight: "400",
   },
   tableHeadText: {
     fontSize: 16,
     margin: 6,
-    textAlign: 'center', 
-    fontWeight: '600',
-    color: 'white'
+    textAlign: "center",
+    fontWeight: "600",
+    color: "white",
   },
-  tableRow: { 
-    height: 40, 
-    backgroundColor: '#BBC3DC' 
+  tableRow: {
+    height: 40,
+    backgroundColor: "#BBC3DC",
   },
   btnAreaStyle: {
     flex: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 };
 
 const mapStateToProps = ({ player }) => {
-  const {  
+  const {
     batch,
     career,
     skillTable,
@@ -328,9 +334,9 @@ const mapStateToProps = ({ player }) => {
     intelligence, //智慧
     love, //愛心
     patience, //耐力
-   } = player;
+  } = player;
 
-  return { 
+  return {
     batch,
     career,
     skillTable,
@@ -365,5 +371,5 @@ export default connect(mapStateToProps, {
   skillCollege,
   resetCodeJunior,
   resetCodeCollege,
-  errorModalSkillType
+  errorModalSkillType,
 })(Skills);

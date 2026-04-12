@@ -13,7 +13,7 @@ import reducers from "./reducers";
 
 const middleware = [ReduxThunk, __DEV__ && logger].filter(Boolean); // filter(Boolean) 會過濾掉false，但true會留著
 class App extends Component {
-  componentWillMount() {
+  componentDidMount() {
     // No backend: decide navigation based on stored session values
     this.renderScene();
   }
