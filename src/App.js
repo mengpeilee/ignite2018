@@ -1,49 +1,43 @@
-import React, { Component } from 'react';
-import {
-  View,
-  StatusBar,
-  Platform,
-  AsyncStorage
-} from 'react-native';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import logger from 'redux-logger';
-import { Actions } from 'react-native-router-flux';
-import ReduxThunk from 'redux-thunk';
-import Parse from 'parse/react-native';
-import data from './Setting.json';
-import SceneRouter from './components/SceneRouter';
-import { ifIphoneX } from './components/IphoneXDetector';
-import reducers from './reducers';
+import React, { Component } from "react";
+import { View, StatusBar, Platform } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Provider } from "react-redux";
+import { createStore, applyMiddleware } from "redux";
+import logger from "redux-logger";
+import { Actions } from "react-native-router-flux";
+import ReduxThunk from "redux-thunk";
+import data from "./Setting.json";
+import SceneRouter from "./components/SceneRouter";
+import { ifIphoneX } from "./components/IphoneXDetector";
+import reducers from "./reducers";
 
-const middleware = [
-  ReduxThunk,
-  __DEV__ && logger,
-].filter(Boolean); // filter(Boolean) 會過濾掉false，但true會留著
+const middleware = [ReduxThunk, __DEV__ && logger].filter(Boolean); // filter(Boolean) 會過濾掉false，但true會留著
 class App extends Component {
   componentWillMount() {
-    Parse.initialize(data.parseAppId);
-    Parse.serverURL = data.parseServerURL;
+    // No backend: decide navigation based on stored session values
     this.renderScene();
   }
 
   renderScene() {
-    Parse.User.currentAsync()
-    .then(async (currentUser) => {
-      if (currentUser) {
-        const sessionToken = currentUser.getSessionToken();
-        await AsyncStorage.setItem('sessionToken', sessionToken);
-        await AsyncStorage.setItem('userID', currentUser.id);
-        if (currentUser.attributes.character === 'gm') {
-          await AsyncStorage.setItem('gm_batch', currentUser.attributes.gm_batch);
-          Actions.gm();
+    // Check AsyncStorage for a stored session and navigate accordingly
+    (async () => {
+      try {
+        const sessionToken = await AsyncStorage.getItem("sessionToken");
+        const userID = await AsyncStorage.getItem("userID");
+        const gmBatch = await AsyncStorage.getItem("gm_batch");
+        if (sessionToken && userID) {
+          if (gmBatch) {
+            Actions.gm();
+          } else {
+            Actions.main();
+          }
         } else {
-          Actions.main();
+          Actions.login();
         }
-      } else {
+      } catch (e) {
         Actions.login();
       }
-    });
+    })();
   }
 
   render() {
@@ -51,10 +45,7 @@ class App extends Component {
     return (
       <Provider store={store}>
         <View style={{ flex: 1 }}>
-          <StatusBar
-              backgroundColor="white"
-              barStyle="dark-content"
-          />
+          <StatusBar backgroundColor="white" barStyle="dark-content" />
           <View style={styles.statusBarStyle} />
           <SceneRouter />
         </View>
@@ -67,22 +58,24 @@ const styles = {
   statusBarStyle: {
     ...Platform.select({
       ios: {
-        ...ifIphoneX({
-          paddingTop: 44,
-          height: 18,
-          backgroundColor: 'white'
-        },
-        {
-          paddingTop: 20,
-          height: 18,
-          backgroundColor: 'white'
-        })
+        ...ifIphoneX(
+          {
+            paddingTop: 44,
+            height: 18,
+            backgroundColor: "white",
+          },
+          {
+            paddingTop: 20,
+            height: 18,
+            backgroundColor: "white",
+          },
+        ),
       },
       android: {
-        height: 0
-      }
-    })
-  }
+        height: 0,
+      },
+    }),
+  },
 };
 
 export default App;
